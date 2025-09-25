@@ -102,19 +102,16 @@ test.describe('Sauce Demo Burger Menu', () => {
 
     test('should navigate to About page and verify content', async ({ page }) => {
       await openMenu(page);
-      
+
       // Click about link and wait for navigation
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: 'load' }),
-        page.click('#about_sidebar_link')
-      ]);
+      await page.click('#about_sidebar_link');
 
       // Verify we're on Sauce Labs website
       expect(page.url()).toContain('saucelabs.com');
-      
+
       // Wait for the page to be loaded
       await page.waitForLoadState('domcontentloaded');
-      
+
       // Return to inventory and verify
       await page.goto('https://www.saucedemo.com/inventory.html');
       await expect(page).toHaveURL('https://www.saucedemo.com/inventory.html');
@@ -264,13 +261,9 @@ test.describe('Sauce Demo Burger Menu', () => {
       await openMenu(page);
 
       // Click about link but don't wait for navigation
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: 'networkidle' }),
-        page.click('#about_sidebar_link'),
-      ]);
-
-      // Verify we've navigated away
-      expect(page.url()).toContain('saucelabs.com');
+      (await page.click('#about_sidebar_link'),
+        // Verify we've navigated away
+        expect(page.url()).toContain('saucelabs.com'));
 
       // Return to the inventory page
       await page.goto('https://www.saucedemo.com/inventory.html');
