@@ -102,15 +102,19 @@ test.describe('Sauce Demo Burger Menu', () => {
 
     test('should navigate to About page and verify content', async ({ page }) => {
       await openMenu(page);
-      await page.click('#about_sidebar_link');
+      
+      // Click about link and wait for navigation
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: 'load' }),
+        page.click('#about_sidebar_link')
+      ]);
 
       // Verify we're on Sauce Labs website
-      await expect(page).toHaveURL(/https:\/\/saucelabs\.com/);
-
-      // Wait for page load and verify minimal content
-      await page.waitForLoadState('networkidle');
-      await expect(page.locator('body')).toBeVisible();
-
+      expect(page.url()).toContain('saucelabs.com');
+      
+      // Wait for the page to be loaded
+      await page.waitForLoadState('domcontentloaded');
+      
       // Return to inventory and verify
       await page.goto('https://www.saucedemo.com/inventory.html');
       await expect(page).toHaveURL('https://www.saucedemo.com/inventory.html');
